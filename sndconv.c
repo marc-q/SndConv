@@ -25,24 +25,76 @@ static short sndconv_get_format (char *filename_src)
 		printf ("Error: Couldn't open the file: %s!\n", filename_src);
 		return -1;
 	}
-
-	printf ("Format: ");
+	
+	printf ("Samplerate:\t%i Hz\n", sfinfo.samplerate);
+	printf ("Channels:\t%i\n", sfinfo.channels);
+	printf ("Format:\t\t");
 	switch (sfinfo.format & SF_FORMAT_TYPEMASK)
 	{
 		case SF_FORMAT_WAV:
-			printf ("WAV\n");
+			printf ("WAV, ");
 			break;
 		case SF_FORMAT_VOC:
-			printf ("VOC\n");
+			printf ("VOC, ");
 			break;
 		case SF_FORMAT_FLAC:
-			printf ("FLAC\n");
+			printf ("FLAC, ");
 			break;
 		case SF_FORMAT_OGG:
-			printf ("OGG\n");
+			printf ("OGG, ");
 			break;
 		default:
-			printf ("Unknown\n");
+			printf ("Unknown, ");
+			break;
+	}
+	
+	switch (sfinfo.format & SF_FORMAT_SUBMASK)
+	{
+		case SF_FORMAT_PCM_S8:
+			printf ("PCM 8 bit, ");
+			break;
+		case SF_FORMAT_PCM_16:
+			printf ("PCM 16 bit, ");
+			break;
+		case SF_FORMAT_PCM_24:
+			printf ("PCM 24 bit, ");
+			break;
+		case SF_FORMAT_PCM_32:
+			printf ("PCM 32 bit, ");
+			break;
+		case SF_FORMAT_PCM_U8:
+			printf ("PCM unsigned 8 bit, ");
+			break;
+		case SF_FORMAT_FLOAT:
+			printf ("32 bit float, ");
+			break;
+		case SF_FORMAT_DOUBLE:
+			printf ("64 bit float, ");
+			break;
+		case SF_FORMAT_VORBIS:
+			printf ("Vorbis, ");
+			break;
+		default:
+			printf ("Unknown, ");
+			break;
+	}
+	
+	switch (sfinfo.format & SF_FORMAT_ENDMASK)
+	{
+		case SF_ENDIAN_FILE:
+			printf ("Default file endian-ness.\n");
+			break;
+		case SF_ENDIAN_LITTLE:
+			printf ("Little endian-ness.\n");
+			break;
+		case SF_ENDIAN_BIG:
+			printf ("Big endian-ness.\n");
+			break;
+		case SF_ENDIAN_CPU:
+			printf ("CPU endian-ness.\n");
+			break;
+		default:
+			printf ("Unknown.\n");
 			break;
 	}
 	
@@ -57,7 +109,7 @@ static int sndconv_get_format_byname (char *name)
 	
 	if (strcmp (name, "WAV") == 0)
 	{
-		out = (SF_FORMAT_WAV | SF_FORMAT_PCM_16) | SF_ENDIAN_LITTLE;
+		out = (SF_FORMAT_WAV | SF_FORMAT_PCM_16) | SF_ENDIAN_FILE;
 	}
 	else if (strcmp (name, "FLAC") == 0)
 	{
