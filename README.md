@@ -26,7 +26,7 @@ To convert an WAV file into an OGG file, use the following command while inside 
 $ ./sndconv --format="OGG" "example.wav" "example.ogg"
 ```
 
-### Example: How to get informations from a file:
+### Example: How to get informations from a file
 The following command outputs some informations like samplerate, its format, etc. about an file.
 Run it inside the directory containing the file.
 
