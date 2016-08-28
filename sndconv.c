@@ -22,7 +22,7 @@ static short sndconv_get_format (char *filename_src)
 	srcfile = sf_open (filename_src, SFM_READ, &sfinfo);
 	if (srcfile == NULL)
 	{
-		printf ("Error: couldn't open the file: %s!\n", filename_src);
+		printf ("Error: Couldn't open the file: %s!\n", filename_src);
 		return -1;
 	}
 
@@ -69,7 +69,7 @@ static int sndconv_get_format_byname (char *name)
 	}
 	else
 	{
-		printf ("Error: Unknown format, use FLAC!\n");
+		printf ("Error: Unknown format, using FLAC!\n");
 		out = (SF_FORMAT_FLAC | SF_FORMAT_PCM_16);
 	}
 	
@@ -127,7 +127,7 @@ static short sndconv_convert (char *filename_src, char *filename_dest, int forma
 static void print_version (void)
 {
 	printf ("SndConv v. 0.0.1 A (C) 2016 Marc Volker Dickmann\n");
-	printf ("SndConv is an simple converter for Audio files written in C.\n");
+	printf ("SndConv is an simple converter for audio files written in C.\n");
 }
 
 static void print_help (void)
