@@ -1,10 +1,18 @@
 /* Copyright 2016 Marc Volker Dickmann */
 /* Project: SndConv */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <getopt.h>
 #include <sndfile.h>
 
+#define P_CMD "sndconv"
+
 #define BUFFER_LEN 4096
+#define SC_CMD_ARG_HELP 'h'
+#define SC_CMD_ARG_VERSION 'V'
+#define SC_CMD_ARG_FILEINFO '1'
+#define SC_CMD_ARG_FORMAT 'f'
 
 static short sndconv_get_format (char *filename_src)
 {
@@ -116,37 +124,90 @@ static short sndconv_convert (char *filename_src, char *filename_dest, int forma
 	return 0;
 }
 
-static void print_about (void)
+static void print_version (void)
 {
+	printf ("SndConv v. 0.0.1 A (C) 2016 Marc Volker Dickmann\n");
 	printf ("SndConv is an simple converter for Audio files written in C.\n");
+}
+
+static void print_help (void)
+{
+	printf ("Usage: %s [OPTION]... [FILE_IN] [FILE_OUT]\n", P_CMD);
+	printf ("Convert FILE_IN into another format and saves it as FILE_OUT.\n");
+	
+	printf ("\nWith no format specified, FLAC will be used.\n");
+	
+	printf ("\nMandatory arguments to long options are mandatory for short options too.\n");
+	printf ("  -%c, --help\t\tdisplay this help and exit\n", SC_CMD_ARG_HELP);
+	printf ("      --version\t\toutput version information and exit\n");
+	
+	printf ("\n      --fileinfo=FILE\toutput informations about a file\n");
+	
+	printf ("\n  -%c, --format=FORMAT\tformat to convert to:\n", SC_CMD_ARG_FORMAT);
+	printf ("                     \t  WAV, FLAC, OGG\n");
 }
 
 static void print_usage (void)
 {
-	printf ("SndConv:\n");
-	printf ("\t-h\t\tHelp\n");
+	printf ("Usage: %s --help\n", P_CMD);
 }
 
 int main (int argc, char *argv[])
 {
-	printf ("SndConv v. 0.0.1 A (C) 2016 Marc Volker Dickmann\n");
+	int optc, optindex, arg_format;
 	
-	if (argc == 2)
+	struct option long_options[] = {
+		{"help", no_argument, 0, SC_CMD_ARG_HELP},
+		{"version", no_argument, 0, SC_CMD_ARG_VERSION},
+		{"fileinfo", required_argument, 0, SC_CMD_ARG_FILEINFO},
+		{"format", required_argument, 0, SC_CMD_ARG_FORMAT},
+		{0, 0, 0, 0}
+	};
+	
+	optindex = 0;
+
+	/* Default values */	
+	arg_format = sndconv_get_format_byname ("FLAC");
+	
+	while (1)
 	{
-		sndconv_get_format (argv[1]);
+		optc = getopt_long (argc, argv, "hf:", long_options, &optindex);
+		
+		if (optc == -1)
+		{
+			break;
+		}
+		
+		switch (optc)
+		{
+			case SC_CMD_ARG_HELP:
+				print_help ();
+				exit (EXIT_SUCCESS);
+				break;
+			case SC_CMD_ARG_VERSION:
+				print_version ();
+				exit (EXIT_SUCCESS);
+				break;
+			case SC_CMD_ARG_FILEINFO:
+				sndconv_get_format (optarg);
+				exit (EXIT_SUCCESS);
+				break;
+			case SC_CMD_ARG_FORMAT:
+				arg_format = sndconv_get_format_byname (optarg);
+				break;
+			default:
+				print_usage ();
+				exit (EXIT_FAILURE);
+				break;
+		}
 	}
-	else if (argc == 3)
+	
+	if (argc-optind >= 2)
 	{
-		sndconv_convert (argv[1], argv[2], sndconv_get_format_byname ("FLAC"));
-	}
-	else if (argc == 4)
-	{
-		sndconv_convert (argv[1], argv[2], sndconv_get_format_byname (argv[3]));
+		sndconv_convert (argv[optind], argv[optind+1], arg_format);
 	}
 	else
 	{
-		print_about ();
-		printf ("\n");
 		print_usage ();
 	}
 	
