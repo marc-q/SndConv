@@ -141,7 +141,7 @@ static void print_help (void)
 	printf ("  -%c, --help\t\tdisplay this help and exit\n", SC_CMD_ARG_HELP);
 	printf ("      --version\t\toutput version information and exit\n");
 	
-	printf ("\n      --fileinfo=FILE\toutput informations about a file\n");
+	printf ("\n      --fileinfo=FILE\toutput informations about FILE\n");
 	
 	printf ("\n  -%c, --format=FORMAT\tformat to convert to:\n", SC_CMD_ARG_FORMAT);
 	printf ("                     \t  WAV, FLAC, OGG\n");
@@ -202,9 +202,9 @@ int main (int argc, char *argv[])
 		}
 	}
 	
-	if (argc-optind >= 2)
+	if (argc - optind >= 2)
 	{
-		sndconv_convert (argv[optind], argv[optind+1], arg_format);
+		sndconv_convert (argv[optind], argv[optind + 1], arg_format);
 	}
 	else
 	{
