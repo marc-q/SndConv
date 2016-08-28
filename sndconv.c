@@ -9,6 +9,7 @@
 #define P_CMD "sndconv"
 
 #define BUFFER_LEN 4096
+
 #define SC_CMD_ARG_HELP 'h'
 #define SC_CMD_ARG_VERSION 'V'
 #define SC_CMD_ARG_FILEINFO '1'
