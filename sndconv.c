@@ -5,15 +5,7 @@
 #include <string.h>
 #include <getopt.h>
 #include <sndfile.h>
-
-#define P_CMD "sndconv"
-
-#define BUFFER_LEN 4096
-
-#define SC_CMD_ARG_HELP 'h'
-#define SC_CMD_ARG_VERSION 'V'
-#define SC_CMD_ARG_FILEINFO '1'
-#define SC_CMD_ARG_FORMAT 'f'
+#include "sndconv.h"
 
 static short sndconv_get_format (char *filename_src)
 {
@@ -129,10 +121,50 @@ static int sndconv_get_format_byname (char *name)
 	return out;
 }
 
+/* Metadata */
+
+static void sndconv_metadata_read (sc_metadata *meta, SNDFILE *srcfile)
+{
+	meta->title = sf_get_string (srcfile, SF_STR_TITLE);
+	meta->copyright = sf_get_string (srcfile, SF_STR_COPYRIGHT);
+	meta->software = sf_get_string (srcfile, SF_STR_SOFTWARE);
+	meta->artist = sf_get_string (srcfile, SF_STR_ARTIST);
+	meta->comment = sf_get_string (srcfile, SF_STR_COMMENT);
+	meta->date = sf_get_string (srcfile, SF_STR_DATE);
+	meta->album = sf_get_string (srcfile, SF_STR_ALBUM);
+	meta->license = sf_get_string (srcfile, SF_STR_LICENSE);
+	meta->tracknbr = sf_get_string (srcfile, SF_STR_TRACKNUMBER);
+	meta->genre = sf_get_string (srcfile, SF_STR_GENRE);
+}
+
+static void sndconv_metadata_write_single (SNDFILE *destfile, int str_type, const char *str)
+{
+	/* Only set the string if it contains real informations [!NULL]. */
+	if (str)
+	{
+		sf_set_string (destfile, str_type, str);
+	}
+}
+
+static void sndconv_metadata_write (sc_metadata *meta, SNDFILE *destfile)
+{
+	sndconv_metadata_write_single (destfile, SF_STR_TITLE, meta->title);
+	sndconv_metadata_write_single (destfile, SF_STR_COPYRIGHT, meta->copyright);
+	sndconv_metadata_write_single (destfile, SF_STR_SOFTWARE, meta->software);
+	sndconv_metadata_write_single (destfile, SF_STR_ARTIST, meta->artist);
+	sndconv_metadata_write_single (destfile, SF_STR_COMMENT, meta->comment);
+	sndconv_metadata_write_single (destfile, SF_STR_DATE, meta->date);
+	sndconv_metadata_write_single (destfile, SF_STR_ALBUM, meta->album);
+	sndconv_metadata_write_single (destfile, SF_STR_LICENSE, meta->license);
+	sndconv_metadata_write_single (destfile, SF_STR_TRACKNUMBER, meta->tracknbr);
+	sndconv_metadata_write_single (destfile, SF_STR_GENRE, meta->genre);
+}
+
 static short sndconv_convert (char *filename_src, char *filename_dest, int format)
 {
 	int readcount;
 	float buffer[BUFFER_LEN];
+	sc_metadata meta;
 	SNDFILE *srcfile, *destfile;
 	SF_INFO  sfinfo;
 	
@@ -159,6 +191,9 @@ static short sndconv_convert (char *filename_src, char *filename_dest, int forma
 		return -3;
 	}
 	
+	sndconv_metadata_read (&meta, srcfile);
+	sndconv_metadata_write (&meta, destfile);
+	
 	while (1)
 	{
 		readcount = sf_read_float (srcfile, buffer, BUFFER_LEN);
@@ -179,7 +214,7 @@ static short sndconv_convert (char *filename_src, char *filename_dest, int forma
 
 static void print_version (void)
 {
-	printf ("SndConv v. 0.0.1 A (C) 2016 Marc Volker Dickmann\n");
+	printf ("SndConv v. 0.0.2 A (C) 2016 Marc Volker Dickmann\n");
 	printf ("SndConv is an simple converter for audio files written in C.\n");
 }
 
