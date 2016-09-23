@@ -10,3 +10,6 @@ sndconv: $(OBJECTS)
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $<
+
+clean:
+	rm $(NAME)
