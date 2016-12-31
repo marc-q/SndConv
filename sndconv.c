@@ -1,4 +1,4 @@
-/* Copyright 2016 Marc Volker Dickmann */
+/* Copyright 2016 - 2017 Marc Volker Dickmann */
 /* Project: SndConv */
 #include <stdio.h>
 #include <stdlib.h>
@@ -214,7 +214,7 @@ static short sndconv_convert (char *filename_src, char *filename_dest, int forma
 
 static void print_version (void)
 {
-	printf ("SndConv v. 0.0.2 A (C) 2016 Marc Volker Dickmann\n");
+	printf ("SndConv v. 0.0.2 A (C) 2016 - 2017 Marc Volker Dickmann\n");
 	printf ("SndConv is an simple converter for audio files written in C.\n");
 }
 
